@@ -60,5 +60,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with this email does not exist"));
     }
 
+    @Override
+    public UserDto getUserProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        UserDto userProfileDto = new UserDto();
+        userProfileDto.setEmail(user.getEmail());
+
+        return userProfileDto;
+    }
+
+    @Override
+    public UserDto getUserProfileAuth(org.springframework.security.core.userdetails.User principal) {
+        return getUserProfile(userRepository.findByEmail(principal.getUsername()).get().getId());
+    }
 }

@@ -9,4 +9,8 @@ public interface UserService {
     void registerUser(UserDto userDto);
 
     User findUserByEmail(String email);
+
+    UserDto getUserProfile(Long userId);
+
+    UserDto getUserProfileAuth(org.springframework.security.core.userdetails.User principal);
 }

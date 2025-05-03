@@ -5,6 +5,7 @@ import org.attractor.java_share_hub.model.FileEntity;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ public interface FileService {
 
     Page<FileDto> getAllPublicFiles(String pageStr);
 
-    Page<FileEntity> getUserFiles(String userEmail, String pageStr);
+    Page<FileDto> getUserFiles(String userEmail, String pageStr);
 
     FileDto getFileByPrivateKey(String privateKey);
 
@@ -24,5 +25,5 @@ public interface FileService {
 
     FileDto getFileById(Long fileId);
 
-    ResponseEntity<Resource> downloadFile(Long fileId);
+    ResponseEntity<Resource> downloadFile(User principal, Long fileId);
 }

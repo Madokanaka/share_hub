@@ -8,9 +8,11 @@ import org.attractor.java_share_hub.service.FileService;
 import org.attractor.java_share_hub.util.FileUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.userdetails.User;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,8 +36,8 @@ public class MainController {
     }
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<?> downloadFile(@PathVariable Long fileId) {
-        return fileService.downloadFile(fileId);
+    public ResponseEntity<?> downloadFile(@AuthenticationPrincipal User principal, @PathVariable Long fileId) {
+        return fileService.downloadFile(principal, fileId);
     }
 
 }

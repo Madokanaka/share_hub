@@ -43,7 +43,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public Page<FileDto> getAllPublicFiles(String pageStr) {
         int page = parsePageParameter(pageStr);
-        int size = 10;
+        int size = 6;
         Pageable pageable = PageRequest.of(page, size);
 
         Page<FileEntity> filesPage = fileRepository.findByIsPublicTrue(pageable);
@@ -59,10 +59,10 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    public Page<FileEntity> getUserFiles(String userEmail, String pageStr) {
+    public Page<FileDto> getUserFiles(String userEmail, String pageStr) {
         User user = userService.findUserByEmail(userEmail);
         int page = parsePageParameter(pageStr);
-        int size = 10;
+        int size = 6;
         Pageable pageable = PageRequest.of(page, size);
 
         Page<FileEntity> filesPage = fileRepository.findByOwner(user, pageable);
@@ -73,7 +73,7 @@ public class FileServiceImpl implements FileService {
             filesPage = fileRepository.findByOwner(user, pageable);
         }
 
-        return filesPage;
+        return filesPage.map(this::mapToDto);
     }
 
 
@@ -94,7 +94,7 @@ public class FileServiceImpl implements FileService {
         Category categoryOpt = categoryService.findById(categoryId);
 
         int page = parsePageParameter(pageStr);
-        int size = 10;
+        int size = 6;
         Pageable pageable = PageRequest.of(page, size);
 
         Page<FileEntity> filesPage = fileRepository.findByCategoryAndIsPublicTrue(categoryOpt, pageable);
@@ -150,12 +150,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public ResponseEntity<Resource> downloadFile(Long fileId) {
+    public ResponseEntity<Resource> downloadFile(org.springframework.security.core.userdetails.User principal, Long fileId) {
         FileDto fileDto = getFileById(fileId);
 
-        if (!fileDto.isPublic()) {
-            log.warn("Attempt to download non-public file with ID: {}", fileId);
-            throw new NoAccessException("This file is private");
+        if (!fileDto.isPublic() && (principal == null || !fileDto.getOwnerEmail().equals(principal.getUsername()))) {
+            log.warn("Attempt to download non-public file with ID: {} by user: {}", fileId, principal != null ? principal.getUsername() : "anonymous");
+            throw new NoAccessException("This file is private or does not belong to you");
         }
 
         log.info("Downloading file: {}", fileDto.getFilename());
