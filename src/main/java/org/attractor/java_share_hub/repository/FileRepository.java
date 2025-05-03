@@ -20,4 +20,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     Optional<FileEntity> findByDownloadKey(String key);
 
     Page<FileEntity> findByCategoryAndIsPublicTrue(Category category, Pageable pageable);
+
+    Page<FileEntity> findByCategory(Category category, Pageable pageable);
+    Page<FileEntity> findAll(Pageable pageable);
 }

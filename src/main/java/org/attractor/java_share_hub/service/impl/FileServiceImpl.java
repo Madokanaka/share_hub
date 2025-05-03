@@ -247,4 +247,44 @@ public class FileServiceImpl implements FileService {
         fileRepository.save(fileEntity);
     }
 
+    @Override
+    public Page<FileDto> getAllFiles(String pageNumber, Long categoryId) {
+        if (categoryId != null && !categoryService.existsById(categoryId)) {
+            categoryId = 0L;
+        }
+
+        int page = parsePageParameter(pageNumber);
+        int size = 6;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<FileEntity> filesPage;
+
+        if (categoryId == null || categoryId == 0) {
+            filesPage = fileRepository.findAll(pageable);
+        } else {
+            Category category = categoryService.findById(categoryId);
+            filesPage = fileRepository.findByCategory(category, pageable);
+        }
+
+        if (filesPage.getTotalPages() > 0 && page >= filesPage.getTotalPages()) {
+            log.warn("Page {} out of bounds, returning last", page);
+            pageable = PageRequest.of(filesPage.getTotalPages() - 1, size);
+            if (categoryId == null || categoryId == 0) {
+                filesPage = fileRepository.findAll(pageable);
+            } else {
+                Category category = categoryService.findById(categoryId);
+                filesPage = fileRepository.findByCategory(category, pageable);
+            }
+        }
+
+        return filesPage.map(this::mapToDto);
+    }
+
+    @Override
+    public void deleteFile(Long fileId) {
+        if (!fileRepository.existsById(fileId)) {
+            throw new ResourceNotFoundException("File not found");
+        }
+        fileRepository.deleteById(fileId);
+    }
+
 }

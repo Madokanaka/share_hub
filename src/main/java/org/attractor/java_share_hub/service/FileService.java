@@ -37,4 +37,8 @@ public interface FileService {
     String generateDownloadLink(Long fileId);
 
     void uploadFile(String userEmail, MultipartFile file, Long categoryId, boolean isPublic);
+
+    Page<FileDto> getAllFiles(String pageNumber, Long categoryId);
+
+    void deleteFile(Long fileId);
 }

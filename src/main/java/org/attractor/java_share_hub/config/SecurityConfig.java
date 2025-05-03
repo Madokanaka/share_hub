@@ -18,6 +18,8 @@ import javax.sql.DataSource;
 public class SecurityConfig {
 
     private final DataSource dataSource;
+    private final CustomAuthenticationSuccessHandler successHandler;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -31,9 +33,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/profile");
-                        })
+                        .successHandler(successHandler)
                         .failureUrl("/auth/login?error=true")
                         .permitAll())
                 .logout(logout -> logout
