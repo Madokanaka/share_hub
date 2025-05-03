@@ -125,6 +125,24 @@
         .btn-upload:hover {
             background-color: #218838;
         }
+
+        .alert-link {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
     </style>
 
     <div class="profile-container">
@@ -149,6 +167,23 @@
                 </button>
             </div>
         </div>
+
+        <#if downloadLink??>
+            <div class="alert alert-link fade-in" role="alert">
+                <i class="fas fa-link me-2"></i>Ссылка для скачивания:
+                <a href="${downloadLink}" class="alert-link">${downloadLink}</a>
+                <button class="btn btn-sm btn-outline-secondary ms-2"
+                        onclick="navigator.clipboard.writeText('${downloadLink}')">
+                    <i class="fas fa-copy"></i> Копировать
+                </button>
+            </div>
+        </#if>
+        <#if error??>
+            <div class="alert alert-error fade-in" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>${error}
+            </div>
+        </#if>
+
         <h3 class="mb-4 fade-in" style="color: #343a40;">Загруженные файлы</h3>
         <#if files?has_content>
             <div class="row">
@@ -174,9 +209,29 @@
                                                 ${file.isPublic()?then('Публичный', 'Приватный')}
                                             </span>
                                     </p>
-                                    <a href="/download/${file.id}" class="btn btn-primary btn-download">
-                                        <i class="fas fa-download me-2"></i>Скачать
-                                    </a>
+                                    <div class="row row-cols-2 justify-content-between">
+                                        <div class="col d-flex align-items-stretch">
+                                            <a href="/download/${file.id}" class="btn btn-primary btn-download w-100">
+                                                <i class="fas fa-download me-2"></i>Скачать
+                                            </a>
+                                        </div>
+                                        <div class="col d-flex align-items-stretch">
+                                            <#if (!file.isPublic())>
+                                                <form method="post" action="/profile/createDownloadLink" class="ms-2 w-100">
+                                                    <#if _csrf??>
+                                                        <input type="hidden"
+                                                               name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                                               value="${(_csrf.token)!'csrf-token'}"/>
+                                                    </#if>
+                                                    <input type="hidden" name="fileId" value="${file.id}">
+                                                    <button type="submit" class="btn btn-warning btn-link-generate w-100">
+                                                        <i class="fas fa-link me-2"></i>Ссылка
+                                                    </button>
+                                                </form>
+                                            </#if>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

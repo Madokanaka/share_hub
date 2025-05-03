@@ -6,7 +6,9 @@ import org.attractor.java_share_hub.dto.FileDto;
 import org.attractor.java_share_hub.service.CategoryService;
 import org.attractor.java_share_hub.service.FileService;
 import org.attractor.java_share_hub.util.FileUtil;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,11 @@ public class MainController {
     @GetMapping("/download/{fileId}")
     public ResponseEntity<?> downloadFile(@AuthenticationPrincipal User principal, @PathVariable Long fileId) {
         return fileService.downloadFile(principal, fileId);
+    }
+
+    @GetMapping("/download/key/{downloadKey}")
+    public ResponseEntity<Resource> downloadFileByKey(@PathVariable String downloadKey) {
+        return fileService.downloadFileByKey(downloadKey);
     }
 
 }

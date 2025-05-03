@@ -13,4 +13,5 @@ public interface UserService {
     UserDto getUserProfile(Long userId);
 
     UserDto getUserProfileAuth(org.springframework.security.core.userdetails.User principal);
+
 }

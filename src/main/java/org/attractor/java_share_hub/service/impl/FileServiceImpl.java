@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -152,6 +153,17 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public FileEntity findById(Long fileId) {
+        return fileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+    }
+
+    @Override
+    public void save(FileEntity file) {
+        fileRepository.save(file);
+    }
+
+    @Override
     public ResponseEntity<Resource> downloadFile(org.springframework.security.core.userdetails.User principal, Long fileId) {
         FileDto fileDto = getFileById(fileId);
 
@@ -166,6 +178,34 @@ public class FileServiceImpl implements FileService {
         fileEntity.setDownloadCount(fileEntity.getDownloadCount() + 1);
         fileRepository.save(fileEntity);
         return response;
+    }
+
+    @Override
+    public ResponseEntity<Resource> downloadFileByKey(String downloadKey) {
+        FileEntity fileEntity = fileRepository.findByDownloadKey(downloadKey)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found"));
+
+        log.info("Downloading private file: {}", fileEntity.getFilename());
+
+        fileEntity.setDownloadKey(null);
+        fileEntity.setDownloadCount(fileEntity.getDownloadCount() + 1);
+        fileRepository.save(fileEntity);
+
+        return fileUtil.getOutputFile(fileEntity.getFilename(), "upload/", MediaType.APPLICATION_OCTET_STREAM);
+    }
+
+    @Override
+    public String generateDownloadLink(Long fileId) {
+        FileEntity fileEntity = findById(fileId);
+
+        if (!fileEntity.isPublic()) {
+            String downloadKey = UUID.randomUUID().toString();
+            fileEntity.setDownloadKey(downloadKey);
+            fileRepository.save(fileEntity);
+            return downloadKey;
+        } else {
+            throw new IllegalArgumentException("File is public, no need for download link.");
+        }
     }
 
     @Override

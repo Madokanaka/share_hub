@@ -26,7 +26,15 @@ public interface FileService {
 
     FileDto getFileById(Long fileId);
 
+    FileEntity findById(Long fileId);
+
+    void save(FileEntity file);
+
     ResponseEntity<Resource> downloadFile(User principal, Long fileId);
+
+    ResponseEntity<Resource> downloadFileByKey(String downloadKey);
+
+    String generateDownloadLink(Long fileId);
 
     void uploadFile(String userEmail, MultipartFile file, Long categoryId, boolean isPublic);
 }
