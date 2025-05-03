@@ -20,8 +20,6 @@ public class FileEntity {
 
     private String filename;
 
-    private String path;
-
     @Column(name = "is_public")
     private boolean isPublic;
 

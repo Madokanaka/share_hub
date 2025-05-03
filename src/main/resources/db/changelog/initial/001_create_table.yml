@@ -68,9 +68,6 @@ databaseChangeLog:
                   name: filename
                   type: VARCHAR(255)
               - column:
-                  name: path
-                  type: VARCHAR(500)
-              - column:
                   name: is_public
                   type: BOOLEAN
               - column:
