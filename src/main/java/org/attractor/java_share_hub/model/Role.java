@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -28,13 +29,8 @@ public class Role {
     @Column(name = "role")
     private String role;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "usr_roles",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "usr_id")
-    )
-    private List<User> users;
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
+    private List<User> users = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles", cascade = CascadeType.ALL)
     private List<Authority> authorities;
