@@ -2,6 +2,7 @@ package org.attractor.java_share_hub.util;
 
 import lombok.SneakyThrows;
 
+import org.attractor.java_share_hub.exception.BadRequestException;
 import org.attractor.java_share_hub.exception.ResourceNotFoundException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -28,8 +29,7 @@ public class FileUtil {
     }
     @SneakyThrows
     public String saveUploadFile(MultipartFile file, String subDir) {
-        String uuidFile = java.util.UUID.randomUUID().toString();
-        String resultFileName = uuidFile + "_" + file.getOriginalFilename();
+        String resultFileName = file.getOriginalFilename();
 
         Path pathDir = Paths.get(UPLOAD_DIR + subDir);
         Files.createDirectories(pathDir);
@@ -41,7 +41,7 @@ public class FileUtil {
         try (OutputStream os = Files.newOutputStream(filePath)) {
             os.write(file.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BadRequestException(e.getMessage());
         }
 
         return resultFileName;

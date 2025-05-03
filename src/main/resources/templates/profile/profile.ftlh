@@ -98,21 +98,55 @@
             background-color: #dc3545;
             font-size: 0.9rem;
         }
+
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: #ffffff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .modal-body {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .btn-upload {
+            background-color: #28a745;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background-color: #218838;
+        }
     </style>
 
     <div class="profile-container">
         <h1 class="text-center mb-5 fade-in" style="color: #343a40;">Профиль пользователя</h1>
 
-        <div class="row">
+        <div class="row justify-content-between">
             <div class="col-md-4 mb-4">
                 <div class="card profile-card fade-in">
                     <div class="card-body text-center">
-                        <img src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' alt="User Avatar" class="border rounded-circle mb-3"
+                        <img src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+                             alt="User Avatar" class="border rounded-circle mb-3"
                              style="width: 100px; height: 100px; object-fit: cover;">
                         <h5 class="card-title" style="color: #007bff;">${userProfile.email}</h5>
                         <p class="card-text"><i class="fas fa-envelope me-2"></i>Email: ${userProfile.email}</p>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <button type="button" class="btn btn-success btn-upload" data-bs-toggle="modal"
+                        data-bs-target="#uploadModal">
+                    <i class="fas fa-upload me-2"></i>Загрузить файл
+                </button>
             </div>
         </div>
         <h3 class="mb-4 fade-in" style="color: #343a40;">Загруженные файлы</h3>
@@ -120,8 +154,8 @@
             <div class="row">
                 <#list files as file>
                     <div class="col-md-4 mb-4 fade-in">
-                        <div class="card file-card">
-                            <div class="card-body">
+                        <div class="card file-card h-100">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">
                                     <i class="fas fa-file-alt me-2"></i>${file.filename}
                                 </h5>
@@ -132,13 +166,18 @@
                                     <i class="fas fa-folder-open me-2"></i>Категория: ${file.categoryName!"Без категории"}
                                 </p>
                                 <p class="card-text">
+                                    <i class="fa-solid fa-download me-2"></i>Скачивания: ${file.downloadCount!"Без категории"}
+                                </p>
+                                <div class="mt-auto">
+                                    <p class="card-text">
                                             <span class="badge ${file.isPublic()?then('badge-public', 'badge-private')}">
                                                 ${file.isPublic()?then('Публичный', 'Приватный')}
                                             </span>
-                                </p>
-                                <a href="/download/${file.id}" class="btn btn-primary btn-download">
-                                    <i class="fas fa-download me-2"></i>Скачать
-                                </a>
+                                    </p>
+                                    <a href="/download/${file.id}" class="btn btn-primary btn-download">
+                                        <i class="fas fa-download me-2"></i>Скачать
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -170,6 +209,40 @@
             </div>
         </div>
     </div>
-    </div>
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadModalLabel"><i class="fas fa-upload me-2"></i>Загрузка файла</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="/profile/upload">
+                        <#if _csrf??>
+                            <input type="hidden" name="${(_csrf.parameterName)!'csrf-param-name'}"
+                                   value="${(_csrf.token)!'csrf-token'}"/>
+                        </#if>
+                        <div class="mb-3">
+                            <label class="form-label">Выберите файл</label>
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                        勞
+                        <div class="mb-3">
+                            <label class="form-label">Категория</label>
+                            <select name="categoryId" class="form-select" required>
+                                <#list categories as category>
+                                    <option value="${category.id}">${category.name}</option>
+                                </#list>
+                            </select>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="isPublic" id="isPublic">
+                            <label class="form-check-label" for="isPublic">Публичный файл</label>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-upload">Загрузить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </@main.layout>

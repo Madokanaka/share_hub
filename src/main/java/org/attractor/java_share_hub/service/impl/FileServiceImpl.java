@@ -20,7 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -166,5 +168,22 @@ public class FileServiceImpl implements FileService {
         return response;
     }
 
+    @Override
+    public void uploadFile(String userEmail, MultipartFile file, Long categoryId, boolean isPublic) {
+        User user = userService.findUserByEmail(userEmail);
+        Category category = categoryService.findById(categoryId);
+
+        fileUtil.saveUploadFile(file, "upload/");
+
+        FileEntity fileEntity = new FileEntity();
+        fileEntity.setFilename(file.getOriginalFilename());
+        fileEntity.setPublic(isPublic);
+        fileEntity.setUploadDate(LocalDateTime.now());
+        fileEntity.setOwner(user);
+        fileEntity.setCategory(category);
+        fileEntity.setDownloadCount(0);
+
+        fileRepository.save(fileEntity);
+    }
 
 }

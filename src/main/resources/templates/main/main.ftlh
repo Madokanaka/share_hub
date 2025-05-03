@@ -26,6 +26,7 @@
                                 <h5 class="card-title">${file.filename}</h5>
                                 <p class="card-text">Загрузил: ${file.ownerEmail}</p>
                                 <p class="card-text">Категория: ${file.categoryName}</p>
+                                <p class="card-text">Скачивания: ${file.downloadCount}</p>
                                 <a href="/download/${file.id}" class="btn btn-primary">Скачать</a>
                             </div>
                         </div>

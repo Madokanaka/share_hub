@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -26,4 +27,6 @@ public interface FileService {
     FileDto getFileById(Long fileId);
 
     ResponseEntity<Resource> downloadFile(User principal, Long fileId);
+
+    void uploadFile(String userEmail, MultipartFile file, Long categoryId, boolean isPublic);
 }

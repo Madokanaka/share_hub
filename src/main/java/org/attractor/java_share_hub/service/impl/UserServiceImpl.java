@@ -75,4 +75,6 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserProfileAuth(org.springframework.security.core.userdetails.User principal) {
         return getUserProfile(userRepository.findByEmail(principal.getUsername()).get().getId());
     }
+
+
 }
