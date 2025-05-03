@@ -3,6 +3,7 @@ package org.attractor.java_share_hub.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.attractor.java_share_hub.dto.FileDto;
+import org.attractor.java_share_hub.exception.BadRequestException;
 import org.attractor.java_share_hub.exception.NoAccessException;
 import org.attractor.java_share_hub.exception.ResourceNotFoundException;
 import org.attractor.java_share_hub.model.Category;
@@ -45,6 +46,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Page<FileDto> getAllPublicFiles(String pageStr) {
+        log.info("Find all public files: {}", pageStr);
         int page = parsePageParameter(pageStr);
         int size = 6;
         Pageable pageable = PageRequest.of(page, size);
@@ -63,6 +65,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Page<FileDto> getUserFiles(String userEmail, String pageStr, Long categoryId) {
+        log.info("Find all user files: {}", pageStr);
         User user = userService.findUserByEmail(userEmail);
         int page = parsePageParameter(pageStr);
         int size = 6;
@@ -98,6 +101,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public FileDto getFileByPrivateKey(String privateKey) {
+        log.info("Find file by private key: {}", privateKey);
         FileEntity file = fileRepository.findByDownloadKey(privateKey)
                 .orElseThrow(() -> new ResourceNotFoundException("Файл с данным ключом не найден"));
 
@@ -107,6 +111,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Page<FileDto> getFilesByCategory(Long categoryId, String pageStr) {
+        log.info("Find files by category: {}", pageStr);
         if (categoryId != null && !categoryService.existsById(categoryId)) {
             categoryId = 0L;
         }
@@ -139,6 +144,7 @@ public class FileServiceImpl implements FileService {
     }
 
     private int parsePageParameter(String page) {
+        log.info("Parse page parameter: {}", page);
         try {
             int pageNumber = Integer.parseInt(page);
             if (pageNumber < 0) {
@@ -167,6 +173,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public FileDto getFileById(Long fileId) {
+        log.info("Find file by id: {}", fileId);
         FileEntity fileEntity = fileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
 
@@ -175,17 +182,20 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public FileEntity findById(Long fileId) {
+        log.info("Find file by id: {}", fileId);
         return fileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
     }
 
     @Override
     public void save(FileEntity file) {
+        log.info("Saving file: {}", file.getFilename());
         fileRepository.save(file);
     }
 
     @Override
     public ResponseEntity<Resource> downloadFile(org.springframework.security.core.userdetails.User principal, Long fileId) {
+        log.info("Find file by id: {}", fileId);
         FileDto fileDto = getFileById(fileId);
 
         if (!fileDto.isPublic() && (principal == null || !fileDto.getOwnerEmail().equals(principal.getUsername()))) {
@@ -217,6 +227,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String generateDownloadLink(Long fileId) {
+        log.info("Find file by id and generate Link: {}", fileId);
         FileEntity fileEntity = findById(fileId);
 
         if (!fileEntity.isPublic()) {
@@ -225,12 +236,14 @@ public class FileServiceImpl implements FileService {
             fileRepository.save(fileEntity);
             return downloadKey;
         } else {
-            throw new IllegalArgumentException("File is public, no need for download link.");
+            log.error("File is public");
+            throw new BadRequestException("File is public, no need for download link.");
         }
     }
 
     @Override
     public void uploadFile(String userEmail, MultipartFile file, Long categoryId, boolean isPublic) {
+        log.info("Upload file: {}", file.getOriginalFilename());
         User user = userService.findUserByEmail(userEmail);
         Category category = categoryService.findById(categoryId);
 

@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserProfile(Long userId) {
+        log.info("Getting user profile: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserProfileAuth(org.springframework.security.core.userdetails.User principal) {
+        log.info("Getting user profile: {}", principal);
         return getUserProfile(userRepository.findByEmail(principal.getUsername()).get().getId());
     }
 
