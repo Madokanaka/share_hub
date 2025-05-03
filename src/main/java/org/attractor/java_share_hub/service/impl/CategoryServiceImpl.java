@@ -35,4 +35,9 @@ public class CategoryServiceImpl implements CategoryService {
                 .toList();
     }
 
+    @Override
+    public boolean existsById(Long id) {
+        return categoryRepository.existsById(id);
+    }
+
 }

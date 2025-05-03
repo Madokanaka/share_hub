@@ -16,7 +16,7 @@ public interface FileService {
 
     Page<FileDto> getAllPublicFiles(String pageStr);
 
-    Page<FileDto> getUserFiles(String userEmail, String pageStr);
+    Page<FileDto> getUserFiles(String userEmail, String pageStr, Long userId);
 
     FileDto getFileByPrivateKey(String privateKey);
 

@@ -184,6 +184,19 @@
             </div>
         </#if>
 
+        <div class="mb-4">
+            <h4>Фильтровать по категории</h4>
+            <form action="/profile" method="get">
+                <div class="form-group">
+                    <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                        <#list categories as category>
+                            <option value="${category.id}" <#if (category.id == selectedCategoryId) && (category.id == selectedCategoryId)>selected</#if>>${category.name}</option>
+                        </#list>
+                    </select>
+                </div>
+            </form>
+        </div>
+
         <h3 class="mb-4 fade-in" style="color: #343a40;">Загруженные файлы</h3>
         <#if files?has_content>
             <div class="row">

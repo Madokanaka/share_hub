@@ -29,7 +29,7 @@ public class UserController {
                               @RequestParam(defaultValue = "0") String page,
                               @RequestParam(required = false, defaultValue = "0") Long categoryId,
                               Model model) {
-        Page<FileDto> userFiles = fileService.getUserFiles(principal.getUsername(), page);
+        Page<FileDto> userFiles = fileService.getUserFiles(principal.getUsername(), page, categoryId);
         UserDto userProfileDto = userService.getUserProfileAuth(principal);
         model.addAttribute("userProfile", userProfileDto);
         model.addAttribute("files", userFiles.getContent());
@@ -53,6 +53,7 @@ public class UserController {
     public String createDownloadLink(@RequestParam("fileId") Long fileId,
                                      @AuthenticationPrincipal User principal,
                                      @RequestParam(defaultValue = "0") String page,
+                                     @RequestParam(required = false, defaultValue = "0") Long categoryId,
                                      HttpServletRequest request,
                                      Model model) {
         FileDto fileDto = fileService.getFileById(fileId);
@@ -62,13 +63,15 @@ public class UserController {
             String protocol = request.getScheme();
             String host = request.getServerName();
             int port = request.getServerPort();
-            Page<FileDto> userFiles = fileService.getUserFiles(principal.getUsername(), page);
+            Page<FileDto> userFiles = fileService.getUserFiles(principal.getUsername(), page, 0L);
             UserDto userProfileDto = userService.getUserProfileAuth(principal);
             model.addAttribute("userProfile", userProfileDto);
             model.addAttribute("files", userFiles.getContent());
             model.addAttribute("currentPage", userFiles.getNumber());
             model.addAttribute("totalPages", userFiles.getTotalPages());
             model.addAttribute("categories", categoryService.findAll());
+            model.addAttribute("selectedCategoryId", categoryId);
+
 
             String downloadLink = protocol + "://" + host + ":" + port + "/download/key/" + downloadKey;
             model.addAttribute("downloadLink", downloadLink);
@@ -78,6 +81,4 @@ public class UserController {
 
         return "profile/profile";
     }
-
-
 }

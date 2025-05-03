@@ -62,18 +62,34 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    public Page<FileDto> getUserFiles(String userEmail, String pageStr) {
+    public Page<FileDto> getUserFiles(String userEmail, String pageStr, Long categoryId) {
         User user = userService.findUserByEmail(userEmail);
         int page = parsePageParameter(pageStr);
         int size = 6;
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<FileEntity> filesPage = fileRepository.findByOwner(user, pageable);
+        if (categoryId != null && !categoryService.existsById(categoryId)) {
+            categoryId = 0L;
+        }
+
+        Page<FileEntity> filesPage;
+
+        if (categoryId != null && categoryId != 0) {
+            Category category = categoryService.findById(categoryId);
+            filesPage = fileRepository.findByOwnerAndCategory(user, category, pageable);
+        } else {
+            filesPage = fileRepository.findByOwner(user, pageable);
+        }
 
         if (filesPage.getTotalPages() > 0 && page >= filesPage.getTotalPages()) {
             log.warn("Запрашиваемая страница {} больше допустимой, возвращаем последнюю", page);
             pageable = PageRequest.of(filesPage.getTotalPages() - 1, size);
-            filesPage = fileRepository.findByOwner(user, pageable);
+            if (categoryId != null && categoryId != 0) {
+                Category category = categoryService.findById(categoryId);
+                filesPage = fileRepository.findByOwnerAndCategory(user, category, pageable);
+            } else {
+                filesPage = fileRepository.findByOwner(user, pageable);
+            }
         }
 
         return filesPage.map(this::mapToDto);
@@ -91,9 +107,14 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Page<FileDto> getFilesByCategory(Long categoryId, String pageStr) {
+        if (categoryId != null && !categoryService.existsById(categoryId)) {
+            categoryId = 0L;
+        }
+
         if (categoryId == null || categoryId == 0) {
             return getAllPublicFiles(pageStr);
         }
+
         Category categoryOpt = categoryService.findById(categoryId);
 
         int page = parsePageParameter(pageStr);

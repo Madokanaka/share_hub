@@ -21,13 +21,15 @@
             <div class="row">
                 <#list files as file>
                     <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${file.filename}</h5>
                                 <p class="card-text">Загрузил: ${file.ownerEmail}</p>
                                 <p class="card-text">Категория: ${file.categoryName}</p>
                                 <p class="card-text">Скачивания: ${file.downloadCount}</p>
-                                <a href="/download/${file.id}" class="btn btn-primary">Скачать</a>
+                                <div class="mt-auto">
+                                    <a href="/download/${file.id}" class="btn btn-primary">Скачать</a>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -12,4 +12,6 @@ public interface CategoryService {
     Category findById(Long id);
 
     List<CategoryDto> findAll();
+
+    boolean existsById(Long id);
 }
