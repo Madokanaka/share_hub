@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.attractor.java_share_hub.dto.UserDto;
 import org.attractor.java_share_hub.exception.DatabaseOperationException;
 import org.attractor.java_share_hub.exception.RecordAlreadyExistsException;
+import org.attractor.java_share_hub.exception.UserNotFoundException;
 import org.attractor.java_share_hub.model.Role;
 import org.attractor.java_share_hub.repository.UserRepository;
 import org.attractor.java_share_hub.service.RoleService;
@@ -52,6 +53,11 @@ public class UserServiceImpl implements UserService {
             log.error("Error saving user", e);
             throw new DatabaseOperationException("Error creating user");
         }
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with this email does not exist"));
     }
 
 
