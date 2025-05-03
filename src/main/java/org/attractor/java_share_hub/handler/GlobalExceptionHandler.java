@@ -12,6 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.NoSuchElementException;
 
@@ -70,4 +73,15 @@ public class GlobalExceptionHandler {
         model.addAttribute("message", e.getMessage());
         return "errors/error";    }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("error", "Файл слишком большой. Максимальный размер файла: 10MB.");
+        return "redirect:/profile";
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public String handleMultipartException(MultipartException ex, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        redirectAttributes.addFlashAttribute("error", "Ошибка при загрузке файла: файл слишком большой или повреждён.");
+        return "redirect:/profile";
+    }
 }

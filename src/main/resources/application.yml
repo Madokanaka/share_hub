@@ -1,5 +1,7 @@
 server:
   port: 8080
+  tomcat:
+    max-swallow-size: 10MB
 spring:
   jpa:
     hibernate:
@@ -26,6 +28,11 @@ spring:
     driver-class-name: org.h2.Driver
   liquibase:
     change-log: classpath:/db/changelog/master.yml
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      resolve-lazily: false
 management:
   endpoints:
     web:
@@ -40,9 +47,8 @@ logging:
         stat: error
       springframework:
         security: debug
-    kg:
       attractor:
-        quiz_platform: debug
+        java_share_hub: debug
     web: info
     sql: error
   logback:
@@ -50,3 +56,4 @@ logging:
 springdoc:
   api-docs:
     path: /v3/api-docs
+

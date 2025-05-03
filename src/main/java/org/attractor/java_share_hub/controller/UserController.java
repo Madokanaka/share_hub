@@ -14,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 
 @Controller
@@ -44,8 +46,14 @@ public class UserController {
     public String uploadFile(@AuthenticationPrincipal User principal,
                              @RequestParam("file") MultipartFile file,
                              @RequestParam("categoryId") Long categoryId,
-                             @RequestParam(value = "isPublic", defaultValue = "false") boolean isPublic) {
-        fileService.uploadFile(principal.getUsername(), file, categoryId, isPublic);
+                             @RequestParam(value = "isPublic", defaultValue = "false") boolean isPublic,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            fileService.uploadFile(principal.getUsername(), file, categoryId, isPublic);
+            redirectAttributes.addFlashAttribute("success", "Файл успешно загружен.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка при загрузке файла: " + e.getMessage());
+        }
         return "redirect:/profile";
     }
 

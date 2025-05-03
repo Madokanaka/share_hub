@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin", "/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/download/{fileId}", "/download/key/{downloadKey}").permitAll()
                         .requestMatchers("/profile/**", "/profile").authenticated()
                         .anyRequest().permitAll()
