@@ -1,9 +1,10 @@
 INSERT INTO users (email, password, role)
 VALUES ('user@example.com', '$2y$10$rCnVmAMe.lOW536A0FCXHOA3kIqRRI1cWlSnYvo1cxvOcdlIk6igK', 'USER');
 
+
 INSERT INTO users (email, password, role)
 VALUES ('admin@example.com', '$2y$10$rCnVmAMe.lOW536A0FCXHOA3kIqRRI1cWlSnYvo1cxvOcdlIk6igK', 'ADMIN');
-
+-- passwords are '123'
 
 INSERT INTO categories (name)
 VALUES ('Documents');
