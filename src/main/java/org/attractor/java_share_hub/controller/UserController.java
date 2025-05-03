@@ -27,6 +27,7 @@ public class UserController {
     @GetMapping("/profile")
     public String viewProfile(@AuthenticationPrincipal User principal,
                               @RequestParam(defaultValue = "0") String page,
+                              @RequestParam(required = false, defaultValue = "0") Long categoryId,
                               Model model) {
         Page<FileDto> userFiles = fileService.getUserFiles(principal.getUsername(), page);
         UserDto userProfileDto = userService.getUserProfileAuth(principal);
@@ -35,6 +36,7 @@ public class UserController {
         model.addAttribute("currentPage", userFiles.getNumber());
         model.addAttribute("totalPages", userFiles.getTotalPages());
         model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("selectedCategoryId", categoryId);
         return "profile/profile";
     }
 

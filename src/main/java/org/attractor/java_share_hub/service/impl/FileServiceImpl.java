@@ -213,10 +213,10 @@ public class FileServiceImpl implements FileService {
         User user = userService.findUserByEmail(userEmail);
         Category category = categoryService.findById(categoryId);
 
-        fileUtil.saveUploadFile(file, "upload/");
+        String fileName = fileUtil.saveUploadFile(file, "upload/");
 
         FileEntity fileEntity = new FileEntity();
-        fileEntity.setFilename(file.getOriginalFilename());
+        fileEntity.setFilename(fileName);
         fileEntity.setPublic(isPublic);
         fileEntity.setUploadDate(LocalDateTime.now());
         fileEntity.setOwner(user);

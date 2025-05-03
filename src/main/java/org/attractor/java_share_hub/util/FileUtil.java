@@ -29,7 +29,8 @@ public class FileUtil {
     }
     @SneakyThrows
     public String saveUploadFile(MultipartFile file, String subDir) {
-        String resultFileName = file.getOriginalFilename();
+        String uuidFile = java.util.UUID.randomUUID().toString();
+        String resultFileName = uuidFile + "_" + file.getOriginalFilename();
 
         Path pathDir = Paths.get(UPLOAD_DIR + subDir);
         Files.createDirectories(pathDir);
